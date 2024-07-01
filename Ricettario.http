@@ -1,0 +1,6 @@
+@Ricettario_HostAddress = http://localhost:5063
+
+GET {{Ricettario_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
