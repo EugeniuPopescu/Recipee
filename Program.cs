@@ -16,6 +16,10 @@ builder.Services.AddSingleton<IJsonService, JsonService>();
 builder.Services.AddSingleton<IRecipeService, RecipeService>();
 builder.Services.AddSingleton<IRecipeRepository, RecipeRepository>();
 
+builder.Services.AddSingleton<IImageService, ImageService>();
+builder.Services.AddSingleton<IImageRepository, ImageRepository>();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

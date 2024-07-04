@@ -7,7 +7,7 @@ namespace Recipee.Interfaces.Services
     public interface IRecipeService
     {
         bool DeleteRecipe(int id);
-        List<Recipe> GetAllRecipee();
+        List<RecipeShort> GetAllRecipee();
         List<RecipeDTO> GetRecipeeToSerialize();
         RecipeDTO GetRecipeId(int id);
         bool InsertRecipe(RecipeDTO recipe);

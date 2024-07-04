@@ -66,7 +66,7 @@ namespace Recipee.Controllers
         {
             try
             {
-                List<Recipe> listOfRecipe = _recipeService.GetAllRecipee();
+                List<RecipeShort> listOfRecipe = _recipeService.GetAllRecipee();
 
                 if (listOfRecipe == null)
                 {

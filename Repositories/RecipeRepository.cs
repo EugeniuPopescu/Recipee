@@ -9,12 +9,10 @@ namespace Recipee.Repositories
 {
     public class RecipeRepository : IRecipeRepository
     {
-        private readonly IConfiguration _configuration;
         private readonly string? _connectionString;
 
         public RecipeRepository(IConfiguration configuration)
         {
-            _configuration = configuration;
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
@@ -76,7 +74,7 @@ namespace Recipee.Repositories
             }
         }
 
-        public List<Recipe> GetAllRecipee()
+        public List<RecipeShort> GetAllRecipee()
         {
             string getAllRecipeeQuery = @"SELECT [Id]
                                                 ,[Name]
@@ -86,7 +84,7 @@ namespace Recipee.Repositories
             {
                 try
                 {
-                    List<Recipe> rowsAffected = connection.Query<Recipe>(getAllRecipeeQuery).ToList();
+                    List<RecipeShort> rowsAffected = connection.Query<RecipeShort>(getAllRecipeeQuery).ToList();
 
                     if (rowsAffected == null)
                     {
@@ -264,6 +262,9 @@ namespace Recipee.Repositories
             string queryDelete = @"DELETE FROM [Ricettario].[dbo].[Ingredients]
                                     WHERE RecipeId = @id
 
+                                    DELETE FROM [Ricettario].[dbo].[Images]
+                                    WHERE RecipeId = @id
+
                                     DELETE FROM [Ricettario].[dbo].[Recipee]
                                     WHERE Id = @id";
 
@@ -303,6 +304,8 @@ namespace Recipee.Repositories
                                       ,[MeasurementUnit]
                                   FROM [Ricettario].[dbo].[Ingredients]
                                   WHERE RecipeId = @id";
+
+            
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {

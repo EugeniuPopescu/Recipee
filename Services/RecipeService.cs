@@ -39,11 +39,11 @@ namespace Recipee.Services
             }
         }
 
-        public List<Recipe> GetAllRecipee()
+        public List<RecipeShort> GetAllRecipee()
         {
             try
             {
-                List<Recipe> listOfRecipe = _recipeRepository.GetAllRecipee();
+                List<RecipeShort> listOfRecipe = _recipeRepository.GetAllRecipee();
 
                 if (listOfRecipe == null)
                 {
