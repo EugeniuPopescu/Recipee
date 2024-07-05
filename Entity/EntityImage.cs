@@ -1,6 +1,6 @@
 ﻿namespace Recipee.Entity
 {
-    public class Image
+    public class EntityImage
     {
         public int Id { get; set; }
         public int RecipeId { get; set; }

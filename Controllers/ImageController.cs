@@ -21,6 +21,20 @@ namespace Recipee.Controllers
             _imageService = imageService;
         }
 
+        [HttpGet("")]
+        public IActionResult GetAllImages()
+        {
+            List<ImageShort> images = _imageService.GetAllImages();
+
+            if (images == null)
+            {
+                return new StatusCodeResult(500);
+            }
+
+
+            return new OkObjectResult(images);
+        }
+
         /// <summary>
         /// get images of recipe by id 
         /// </summary>
@@ -34,7 +48,7 @@ namespace Recipee.Controllers
                 return new BadRequestResult();
             }
 
-            Image image = _imageService.GetImageById(id);
+            EntityImage image = _imageService.GetImageById(id);
 
             if (image == null)
             {
@@ -49,7 +63,7 @@ namespace Recipee.Controllers
         /// </summary>
         /// <param name="recipeId">Id of recipe</param>
         /// <returns>all images of the recipe</returns>
-        [HttpGet("recipe/{id}")]
+        [HttpGet("recipe/{id}/download/")]
         public IActionResult GetImageByRecipeId(int id)
         {
             if (id <= 0)
@@ -57,7 +71,7 @@ namespace Recipee.Controllers
                 return new BadRequestResult();
             }
 
-            List<Image> images = _imageService.GetImageByRecypeId(id);
+            List<EntityImage> images = _imageService.GetImageByRecypeId(id);
 
             if (images == null)
             {
@@ -98,7 +112,7 @@ namespace Recipee.Controllers
         /// <param name="recipeId">specify recipe id where want to insert image</param>
         /// <param name="imagePath">image path to insert</param>
         /// <returns>boolean if image was inserted or not</returns>
-        [HttpPost("")]
+        [HttpPost("recipe/{recipeId}")]
         public IActionResult PostFile(int recipeId, [FromForm] ImageDTO img)
         {
             if (recipeId <= 0 || img == null || img.Image == null)

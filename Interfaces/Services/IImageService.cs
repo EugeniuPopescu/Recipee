@@ -7,8 +7,9 @@ namespace Recipee.Interfaces.Services
     public interface IImageService
     {
         bool DeleteImage(int id);
-        Image GetImageById(int id);
-        List<Image> GetImageByRecypeId(int recipeId);
+        List<ImageShort> GetAllImages();
+        EntityImage GetImageById(int id);
+        List<EntityImage> GetImageByRecypeId(int recipeId);
         bool InsertImage(int recipeId, [FromForm] ImageDTO img);
         bool UpdateImage(int id, ImageDTO img);
     }

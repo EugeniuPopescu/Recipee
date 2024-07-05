@@ -18,15 +18,42 @@ namespace Recipee.Repositories
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public Image GetImageById(int id)
+        public List<ImageShort> GetAllImages()
         {
-            string query = "SELECT * FROM [dbo].[Images] WHERE [Id] = @Id";
+            string querySelect = @"SELECT [Id]
+                                         ,[RecipeId]
+                                         ,[FileName]
+                                         ,[ContentType]
+                                         ,[Data]
+                                  FROM [dbo].[Images]";
+
+            using (SqlConnection connection = new SqlConnection(_connectionString))
+            {
+                List<ImageShort> images = connection.Query<ImageShort>(querySelect).ToList();
+
+                if (images == null)
+                {
+                    return null;
+                }
+
+                return images;
+            }
+        }
+
+        public EntityImage GetImageById(int id)
+        {
+            string query = @"SELECT [Id]
+                                   ,[RecipeId]
+                                   ,[FileName]
+                                   ,[ContentType]
+                                   ,[Data]
+                            FROM [dbo].[Images] WHERE [Id] = @Id";
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
                 try
                 {
-                    Image image = connection.QuerySingleOrDefault<Image>(query, new { Id = id });
+                    EntityImage image = connection.QuerySingleOrDefault<EntityImage>(query, new { Id = id });
 
                     if (image == null)
                     {
@@ -42,7 +69,7 @@ namespace Recipee.Repositories
             }
         }
 
-        public List<Image> GetImageByRecipeId(int recipeId)
+        public List<EntityImage> GetImageByRecipeId(int recipeId)
         {
             string queryImages = @"SELECT [Id]
                                       ,[RecipeId]
@@ -56,7 +83,7 @@ namespace Recipee.Repositories
             {
                 try
                 {
-                    List<Image> images = connection.Query<Image>(queryImages, new { recipeId = recipeId}).ToList();
+                    List<EntityImage> images = connection.Query<EntityImage>(queryImages, new { recipeId = recipeId}).ToList();
 
                     if (images == null)
                     {
@@ -72,7 +99,7 @@ namespace Recipee.Repositories
             }
         }
 
-        public bool InsertImage(int recipeId, Image image)
+        public bool InsertImage(int recipeId, EntityImage image)
         {
             string queryInsertImage = @"INSERT INTO [dbo].[Images] ([RecipeId], [FileName], [ContentType], [Data])
                                     VALUES (@recipeId, @fileName, @contentType, @data)";
@@ -98,7 +125,7 @@ namespace Recipee.Repositories
             }
         }
 
-        public bool UpdateImage(int id, Image image)
+        public bool UpdateImage(int id, EntityImage image)
         {
             string queryUpdateImage = @"UPDATE [dbo].[Images]
                                         SET [FileName] = @fileName, [ContentType] = @contentType, [Data] = @data

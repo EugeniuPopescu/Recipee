@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Recipee.DTO;
+﻿using Recipee.DTO;
 using Recipee.Entity;
 using Recipee.Interfaces.Repositories;
 using Recipee.Interfaces.Services;
-using Recipee.Repositories;
-using System.Net;
+using ImageMagick;
 
 namespace Recipee.Services
 {
@@ -14,17 +11,33 @@ namespace Recipee.Services
         private IImageRepository _imageRepository;
         private IConfiguration _configuration;
         private string? _downloadDirectory;
+        private int _resizedWidth;
+        private int _resizedHeight;
 
         public ImageService(IImageRepository imageRepository, IConfiguration configuration)
         {
             _imageRepository = imageRepository;
             _configuration = configuration;
             _downloadDirectory = _configuration.GetValue<string>("DownloadDirectory");
+            _resizedWidth = _configuration.GetValue<int>("ResizedWidth");
+            _resizedHeight = _configuration.GetValue<int>("ResizedHeight");
         }
 
-        public Image GetImageById(int id)
+        public List<ImageShort> GetAllImages()
         {
-            Image image = _imageRepository.GetImageById(id);
+            List<ImageShort> images = _imageRepository.GetAllImages();
+
+            if (images == null)
+            {
+                return null;
+            }
+
+            return images;
+        }
+
+        public EntityImage GetImageById(int id)
+        {
+            EntityImage image = _imageRepository.GetImageById(id);
 
             if (image == null)
             {
@@ -33,9 +46,9 @@ namespace Recipee.Services
             return image;
         }
 
-        public List<Image> GetImageByRecypeId(int recipeId)
+        public List<EntityImage> GetImageByRecypeId(int recipeId)
         {
-            List<Image> images = _imageRepository.GetImageByRecipeId(recipeId);
+            List<EntityImage> images = _imageRepository.GetImageByRecipeId(recipeId);
 
             if (images == null)
             {
@@ -47,15 +60,33 @@ namespace Recipee.Services
 
         public bool InsertImage(int recipeId, ImageDTO img)
         {
+            byte[] bytes;
+
             using (var memoryStream = new MemoryStream())
             {
+                // copio l'immagine originale nello stream di memoria
                 img.Image.CopyTo(memoryStream);
-                Image image = new Image()
+
+                // magick core 
+                using (MagickImage resizeImage = new MagickImage(memoryStream.ToArray()))
+                {
+                    MagickGeometry size = new MagickGeometry(_resizedWidth, _resizedHeight);
+
+                    size.FillArea = true;
+
+                    resizeImage.Resize(size);
+
+                    bytes = memoryStream.ToArray();
+                }
+                
+
+                // creo un oggetto ImageE con i dati dell'immagine ridimensionata
+                EntityImage image = new EntityImage()
                 {
                     RecipeId = recipeId,
                     FileName = img.Image.FileName,
                     ContentType = img.Image.ContentType,
-                    Data = memoryStream.ToArray()
+                    Data = bytes
                 };
 
                 bool insertImage = _imageRepository.InsertImage(recipeId, image);
@@ -74,7 +105,7 @@ namespace Recipee.Services
             using (var memoryStream = new MemoryStream())
             {
                 img.Image.CopyTo(memoryStream);
-                Image image = new Image()
+                EntityImage image = new EntityImage()
                 {
                     FileName = img.Image.FileName,
                     ContentType = img.Image.ContentType,
