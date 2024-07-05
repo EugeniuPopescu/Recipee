@@ -64,8 +64,11 @@ namespace Recipee.Services
 
             using (var memoryStream = new MemoryStream())
             {
+
                 // copio l'immagine originale nello stream di memoria
                 img.Image.CopyTo(memoryStream);
+
+                memoryStream.Seek(0, SeekOrigin.Begin);
 
                 // magick core 
                 using (MagickImage resizeImage = new MagickImage(memoryStream.ToArray()))
@@ -76,11 +79,19 @@ namespace Recipee.Services
 
                     resizeImage.Resize(size);
 
-                    bytes = memoryStream.ToArray();
+                    resizeImage.Write(memoryStream);
+
+                    using (MemoryStream output = new MemoryStream())
+                    {
+                        resizeImage.Write(output);
+
+                        bytes = output.ToArray();
+                    }
                 }
+
                 
 
-                // creo un oggetto ImageE con i dati dell'immagine ridimensionata
+                // creo un oggetto EntityImage con i dati dell'immagine ridimensionata
                 EntityImage image = new EntityImage()
                 {
                     RecipeId = recipeId,

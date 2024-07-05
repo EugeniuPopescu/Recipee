@@ -21,6 +21,10 @@ namespace Recipee.Controllers
             _imageService = imageService;
         }
 
+        /// <summary>
+        /// Get images
+        /// </summary>
+        /// <returns>All images</returns>
         [HttpGet("")]
         public IActionResult GetAllImages()
         {
@@ -63,15 +67,15 @@ namespace Recipee.Controllers
         /// </summary>
         /// <param name="recipeId">Id of recipe</param>
         /// <returns>all images of the recipe</returns>
-        [HttpGet("recipe/{id}/download/")]
-        public IActionResult GetImageByRecipeId(int id)
+        [HttpGet("recipe/{recipeId}/download/")]
+        public IActionResult GetImageByRecipeId(int recipeId)
         {
-            if (id <= 0)
+            if (recipeId <= 0)
             {
                 return new BadRequestResult();
             }
 
-            List<EntityImage> images = _imageService.GetImageByRecypeId(id);
+            List<EntityImage> images = _imageService.GetImageByRecypeId(recipeId);
 
             if (images == null)
             {
