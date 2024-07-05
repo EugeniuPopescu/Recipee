@@ -86,24 +86,35 @@ namespace Recipee.Controllers
 
             byte[] result;
 
+            // apro il file di memoria 
             using (MemoryStream ms = new MemoryStream())
             {
+                // apro zip archive
                 using (ZipArchive zipArchive = new ZipArchive(ms, ZipArchiveMode.Create, true))
                 {
-                    foreach (var image in images)
+                    //ciclo sulle immagini 
+                    foreach (EntityImage image in images)
                     {
+                        // crea un nuovo file compresso all'interno dell'archivio zip
                         var fileInArchive = zipArchive.CreateEntry(image.FileName, CompressionLevel.Optimal);
-                        using (var entryStream = fileInArchive.Open())
+
+                        // apro il file che ho creato 
+                        using (Stream entryStream = fileInArchive.Open())
                         { 
+                            // per ogni immagine apro il file di memorya con il buffer uguale alla dimansione dell'immagine 
                             using (MemoryStream fileToCompressStream = new MemoryStream(image.Data))
                             {
+                                // copio i file nel mio memory stream 
                                 fileToCompressStream.CopyTo(entryStream);
                             }
                         }
                     }
                 }
 
+                // faccio partire il flusso da 0
                 ms.Seek(0, SeekOrigin.Begin);
+
+                // salvo il risultato in un byte[] perche mi serve per stamparlo alla fine  
                 result = ms.ToArray();
             }
 
