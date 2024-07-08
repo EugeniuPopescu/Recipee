@@ -18,7 +18,7 @@ namespace Recipee.Repositories
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public List<ImageShort> GetAllImages()
+        public List<ImageShort>? GetAllImages()
         {
             string querySelect = @"SELECT [Id]
                                          ,[RecipeId]
@@ -40,7 +40,7 @@ namespace Recipee.Repositories
             }
         }
 
-        public EntityImage GetImageById(int id)
+        public EntityImage? GetImageById(int id)
         {
             string query = @"SELECT [Id]
                                    ,[RecipeId]
@@ -53,7 +53,7 @@ namespace Recipee.Repositories
             {
                 try
                 {
-                    EntityImage image = connection.QuerySingleOrDefault<EntityImage>(query, new { Id = id });
+                    EntityImage? image = connection.QuerySingleOrDefault<EntityImage>(query, new { Id = id });
 
                     if (image == null)
                     {
@@ -62,14 +62,14 @@ namespace Recipee.Repositories
 
                     return image;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    throw ex;
+                    throw;
                 }
             }
         }
 
-        public List<EntityImage> GetImageByRecipeId(int recipeId)
+        public List<EntityImage>? GetImageByRecipeId(int recipeId)
         {
             string queryImages = @"SELECT [Id]
                                       ,[RecipeId]
@@ -92,9 +92,9 @@ namespace Recipee.Repositories
 
                     return images;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -117,10 +117,10 @@ namespace Recipee.Repositories
 
                     return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Log exception
-                    return false;
+                    throw;
                 }
             }
         }
@@ -144,10 +144,10 @@ namespace Recipee.Repositories
 
                     return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Log exception
-                    return false;
+                    throw;
                 }
             }
         }
@@ -169,10 +169,10 @@ namespace Recipee.Repositories
 
                     return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // Log exception
-                    return false;
+                    throw;
                 }
             }
         }

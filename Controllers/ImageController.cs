@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 using Recipee.DTO;
 using Recipee.Entity;
 using Recipee.Interfaces.Services;
-using System.IO.Compression;
 
 namespace Recipee.Controllers
 {
@@ -28,7 +26,7 @@ namespace Recipee.Controllers
         [HttpGet("")]
         public IActionResult GetAllImages()
         {
-            List<ImageShort> images = _imageService.GetAllImages();
+            List<ImageShort>? images = _imageService.GetAllImages();
 
             if (images == null)
             {
@@ -52,7 +50,7 @@ namespace Recipee.Controllers
                 return new BadRequestResult();
             }
 
-            EntityImage image = _imageService.GetImageById(id);
+            EntityImage? image = _imageService.GetImageById(id);
 
             if (image == null)
             {
@@ -68,57 +66,28 @@ namespace Recipee.Controllers
         /// <param name="recipeId">Id of recipe</param>
         /// <returns>all images of the recipe</returns>
         [HttpGet("recipe/{recipeId}/download/")]
-        public IActionResult GetImageByRecipeId(int recipeId)
+        public IActionResult? GetImageByRecipeId(int recipeId)
         {
             if (recipeId <= 0)
             {
                 return new BadRequestResult();
             }
 
-            List<EntityImage> images = _imageService.GetImageByRecypeId(recipeId);
+            List<EntityImage>? images = _imageService.GetImageByRecypeId(recipeId);
 
             if (images == null)
             {
                 return new StatusCodeResult(500);
             }
 
-            string zipFileName = "imageZip.zip";
+            byte[]? downloadImge = _imageService.DownloadImage(images);
 
-            byte[] result;
-
-            // apro il file di memoria 
-            using (MemoryStream ms = new MemoryStream())
+            if (downloadImge == null)
             {
-                // apro zip archive
-                using (ZipArchive zipArchive = new ZipArchive(ms, ZipArchiveMode.Create, true))
-                {
-                    //ciclo sulle immagini 
-                    foreach (EntityImage image in images)
-                    {
-                        // crea un nuovo file compresso all'interno dell'archivio zip
-                        var fileInArchive = zipArchive.CreateEntry(image.FileName, CompressionLevel.Optimal);
-
-                        // apro il file che ho creato 
-                        using (Stream entryStream = fileInArchive.Open())
-                        { 
-                            // per ogni immagine apro il file di memorya con il buffer uguale alla dimansione dell'immagine 
-                            using (MemoryStream fileToCompressStream = new MemoryStream(image.Data))
-                            {
-                                // copio i file nel mio memory stream 
-                                fileToCompressStream.CopyTo(entryStream);
-                            }
-                        }
-                    }
-                }
-
-                // faccio partire il flusso da 0
-                ms.Seek(0, SeekOrigin.Begin);
-
-                // salvo il risultato in un byte[] perche mi serve per stamparlo alla fine  
-                result = ms.ToArray();
+                return new StatusCodeResult(500);
             }
 
-            return File(result, "application/zip", zipFileName);
+            return File(downloadImge, "application/zip", "DownloadImage.zip");
         }
 
         /// <summary>
@@ -137,7 +106,7 @@ namespace Recipee.Controllers
 
             bool insertImage = _imageService.InsertImage(recipeId, img);
 
-            if (!insertImage)
+            if (insertImage)
             {
                 return new StatusCodeResult(500);
             }

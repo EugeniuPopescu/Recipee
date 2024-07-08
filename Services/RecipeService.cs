@@ -33,9 +33,9 @@ namespace Recipee.Services
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -45,35 +45,25 @@ namespace Recipee.Services
             {
                 List<RecipeShort> listOfRecipe = _recipeRepository.GetAllRecipee();
 
-                if (listOfRecipe == null)
-                {
-                    return null;
-                }
-
                 return listOfRecipe;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
-        public RecipeDTO GetRecipeId(int id)
+        public RecipeDTO? GetRecipeId(int id)
         {
             try
             {
-                RecipeDTO recipe = _recipeRepository.GetRecipeId(id);
-
-                if (recipe == null)
-                {
-                    return null;
-                }
+                RecipeDTO? recipe = _recipeRepository.GetRecipeId(id);
 
                 return recipe;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -86,7 +76,12 @@ namespace Recipee.Services
 
             try
             {
-                List<IngredientDTO> ingredients = recipe.Ingredients;
+                List<IngredientDTO>? ingredients = recipe.Ingredients;
+
+                if (ingredients == null)
+                {
+                    return false;
+                }
 
                 bool insertRecipe = _recipeRepository.InsertRecipe(recipe, ingredients);
 
@@ -97,35 +92,25 @@ namespace Recipee.Services
 
                 return true;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
-        public RecipeDTO UpdateRecipe(int id, RecipeDTO recipe)
+        public RecipeDTO? UpdateRecipe(int id, RecipeDTO recipe)
         {
-            if (id <= 0 || recipe == null)
-            {
-                return null;
-            }
-
             try
             {
-                List<IngredientDTO> ingredients = recipe.Ingredients;
+                List<IngredientDTO>? ingredients = recipe.Ingredients;
 
-                RecipeDTO updateRecipe = _recipeRepository.UpdateRecipe(id, recipe, ingredients);
-
-                if (updateRecipe == null)
-                {
-                    return null;
-                }
+                RecipeDTO? updateRecipe = _recipeRepository.UpdateRecipe(id, recipe, ingredients);
 
                 return updateRecipe;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -142,28 +127,23 @@ namespace Recipee.Services
 
                 return deleteRecipe;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
-        public List<RecipeDTO> GetRecipeeToSerialize()
+        public List<RecipeDTO>? GetRecipeeToSerialize()
         {
             try
             {
-                List<RecipeDTO> listRecipe = _recipeRepository.GetRecipeeToSerialize();
-                
-                if (listRecipe == null)
-                {
-                    return null;
-                }
+                List<RecipeDTO>? listRecipe = _recipeRepository.GetRecipeeToSerialize();
 
                 return listRecipe;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
     }

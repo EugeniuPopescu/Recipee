@@ -16,7 +16,7 @@ namespace Recipee.Repositories
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public bool InsertRecipee(RecipeDTO recipeDTO)
+        public bool InsertRecipee(RecipeDTO? recipeDTO)
         {
             string queryInsertRecipee = @"
                     DECLARE @insertedId TABLE (Id int);
@@ -34,7 +34,12 @@ namespace Recipee.Repositories
             {
                 try
                 {
-                    dynamic recipeId = connection.QuerySingle<int>(queryInsertRecipee, new
+                    if (recipeDTO == null)
+                    {
+                        return false;
+                    }
+
+                    int recipeId = connection.QuerySingle<int>(queryInsertRecipee, new
                     {
                         Name = recipeDTO.Name,
                         Category = recipeDTO.Category,
@@ -43,13 +48,16 @@ namespace Recipee.Repositories
                         Portions = recipeDTO.Portions
                     });
 
-                    if (recipeId == null)
+
+
+                    if (recipeDTO.Ingredients == null)
                     {
                         return false;
                     }
 
-                    foreach (var ingredient in recipeDTO.Ingredients)
+                    foreach (IngredientDTO ingredient in recipeDTO.Ingredients)
                     {
+
                         dynamic rowAffected = connection.Execute(queryInsertIngredients, new
                         {
                             RecipeId = recipeId,
@@ -67,9 +75,9 @@ namespace Recipee.Repositories
                     return true;
 
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -86,22 +94,16 @@ namespace Recipee.Repositories
                 {
                     List<RecipeShort> rowsAffected = connection.Query<RecipeShort>(getAllRecipeeQuery).ToList();
 
-                    if (rowsAffected == null)
-                    {
-                        return null;
-                    }
-
-
                     return rowsAffected;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    throw ex;
+                    throw;
                 }
             }
         }
 
-        public RecipeDTO GetRecipeId(int id)
+        public RecipeDTO? GetRecipeId(int id)
         {
             string querySelectId = @"SELECT  [Id]
                                   ,[Name]
@@ -125,22 +127,22 @@ namespace Recipee.Repositories
             {
                 try
                 {
-                    RecipeDTO recipe = connection.QuerySingleOrDefault<RecipeDTO>(querySelectId, new { id = id });
+                    RecipeDTO? recipe = connection.QuerySingleOrDefault<RecipeDTO?>(querySelectId, new { id = id });
 
                     if (recipe == null)
                     {
                         return null;
                     }
 
-                    List<IngredientDTO> ingredients = connection.Query<IngredientDTO>(querySelectIngredient, new {id = id}).ToList();
+                    List<IngredientDTO> ingredients = connection.Query<IngredientDTO>(querySelectIngredient, new { id = id }).ToList();
 
                     recipe.Ingredients = ingredients;
 
                     return recipe;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -194,14 +196,14 @@ namespace Recipee.Repositories
 
                     return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    throw ex;
+                    throw;
                 }
             }
         }
 
-        public RecipeDTO UpdateRecipe(int id, RecipeDTO recipe, List<IngredientDTO> ingredients)
+        public RecipeDTO? UpdateRecipe(int id, RecipeDTO recipe, List<IngredientDTO>? ingredients)
         {
             string queryUpdateRecipe = @"UPDATE [dbo].[Recipee] 
                                         SET [Name] = @Name, [Category] = @Category, [CookingTime] = @CookingTime, [Difficulty] = @Difficulty, [Portions] = @Portions
@@ -225,12 +227,12 @@ namespace Recipee.Repositories
                         Portions = recipe.Portions
                     });
 
-                    if (recipeId == null)
+                    if (ingredients == null)
                     {
                         return null;
                     }
 
-                    foreach (var ingredient in ingredients)
+                    foreach (IngredientDTO ingredient in ingredients)
                     {
                         dynamic rowAffected = connection.Execute(queryUpdateIngredients, new
                         {
@@ -239,20 +241,15 @@ namespace Recipee.Repositories
                             Quantity = ingredient.Quantity,
                             MeasurementUnit = ingredient.MeasurementUnit
                         });
-
-                        if (rowAffected == null)
-                        {
-                            return null;
-                        }
                     }
 
                     recipe.Ingredients = ingredients;
 
                     return recipe;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    throw ex;
+                    throw;
                 }
             }
         }
@@ -272,7 +269,7 @@ namespace Recipee.Repositories
             {
                 try
                 {
-                    var delete = connection.Execute(queryDelete, new {id = id});
+                    var delete = connection.Execute(queryDelete, new { id = id });
 
                     if (delete == 0)
                     {
@@ -281,14 +278,14 @@ namespace Recipee.Repositories
 
                     return true;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    throw ex;
+                    throw;
                 }
             }
         }
 
-        public List<RecipeDTO> GetRecipeeToSerialize()
+        public List<RecipeDTO>? GetRecipeeToSerialize()
         {
             string querySelectR = @"SELECT [Id]
                                           ,[Name]
@@ -305,7 +302,7 @@ namespace Recipee.Repositories
                                   FROM [Ricettario].[dbo].[Ingredients]
                                   WHERE RecipeId = @id";
 
-            
+
 
             using (SqlConnection connection = new SqlConnection(_connectionString))
             {
@@ -318,7 +315,7 @@ namespace Recipee.Repositories
 
                 foreach (var recipe in listRecipe)
                 {
-                    List<IngredientDTO> listIngradients = connection.Query<IngredientDTO>(querySelectI, new {id = recipe.Id}).ToList();
+                    List<IngredientDTO> listIngradients = connection.Query<IngredientDTO>(querySelectI, new { id = recipe.Id }).ToList();
 
                     recipe.Ingredients = listIngradients;
                 }

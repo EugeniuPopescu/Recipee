@@ -34,7 +34,7 @@ namespace Recipee.Controllers
             try
             {
                 // servizio che mi deserializza il json
-                RecipeeDTO listOfRecipeeDeserialized = _JsonService.GetListOfRecipeeDeserialized();
+                RecipeeDTO? listOfRecipeeDeserialized = _JsonService.GetListOfRecipeeDeserialized();
 
                 if (listOfRecipeeDeserialized == null)
                 {
@@ -51,9 +51,9 @@ namespace Recipee.Controllers
 
                 return new OkObjectResult(inserted);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -75,9 +75,9 @@ namespace Recipee.Controllers
 
                 return new OkObjectResult(listOfRecipe);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -96,7 +96,7 @@ namespace Recipee.Controllers
 
             try
             {
-                RecipeDTO recipe = _recipeService.GetRecipeId(id);
+                RecipeDTO? recipe = _recipeService.GetRecipeId(id);
 
                 if (recipe == null)
                 {
@@ -105,9 +105,9 @@ namespace Recipee.Controllers
 
                 return new OkObjectResult(recipe);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -134,9 +134,9 @@ namespace Recipee.Controllers
 
                 return new OkObjectResult(insertRecipe);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -156,7 +156,7 @@ namespace Recipee.Controllers
 
             try
             {
-                RecipeDTO updateRecipe = _recipeService.UpdateRecipe(id, recipe);
+                RecipeDTO? updateRecipe = _recipeService.UpdateRecipe(id, recipe);
 
                 if (updateRecipe == null)
                 {
@@ -165,9 +165,9 @@ namespace Recipee.Controllers
 
                 return new OkObjectResult(updateRecipe);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
 
@@ -211,7 +211,7 @@ namespace Recipee.Controllers
             try
             {
                 // servizio che andra a leggere le tabelle
-                List<RecipeDTO> listRecipee = _recipeService.GetRecipeeToSerialize();
+                List<RecipeDTO>? listRecipee = _recipeService.GetRecipeeToSerialize();
 
                 if (listRecipee == null)
                 {
@@ -228,9 +228,9 @@ namespace Recipee.Controllers
                 
                 return new OkObjectResult(downloadFile);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
         }
     }

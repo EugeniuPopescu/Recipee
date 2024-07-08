@@ -18,21 +18,25 @@ namespace Recipee.Services
             _exportJsonFile = configuration.GetValue<string>("ExportedRecipee");
         }
 
-        public RecipeeDTO GetListOfRecipeeDeserialized()
+        public RecipeeDTO? GetListOfRecipeeDeserialized()
         {
+            if (string.IsNullOrEmpty(_importJsonFile) || !File.Exists(_importJsonFile))
+            {
+                return null;
+            }
             // leggo dentro il file
             string jsonFile = File.ReadAllText(_importJsonFile);
 
-            if (String.IsNullOrWhiteSpace(jsonFile) == null)
+            if (String.IsNullOrWhiteSpace(jsonFile))
             {
                 return null;
             }
 
             // istanzio la lisa di ricette 
-            RecipeeDTO? recipeeListDeserialized = new();
+            //RecipeeDTO? recipeeListDeserialized = new();
 
             // deserializzo
-            recipeeListDeserialized = JsonConvert.DeserializeObject<RecipeeDTO>(jsonFile);
+            RecipeeDTO?  recipeeListDeserialized = JsonConvert.DeserializeObject<RecipeeDTO>(jsonFile);
 
             return recipeeListDeserialized;
         }
@@ -48,7 +52,7 @@ namespace Recipee.Services
             // serializzo la lista
             string jsonList = JsonConvert.SerializeObject(listRecipee);
 
-            if (String.IsNullOrWhiteSpace(jsonList))
+            if (string.IsNullOrWhiteSpace(jsonList) || string.IsNullOrEmpty(_exportJsonFile))
             {
                 return false;
             }

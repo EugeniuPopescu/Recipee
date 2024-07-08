@@ -8,10 +8,10 @@ namespace Recipee.Interfaces.Services
     {
         bool DeleteRecipe(int id);
         List<RecipeShort> GetAllRecipee();
-        List<RecipeDTO> GetRecipeeToSerialize();
-        RecipeDTO GetRecipeId(int id);
+        List<RecipeDTO>? GetRecipeeToSerialize();
+        RecipeDTO? GetRecipeId(int id);
         bool InsertRecipe(RecipeDTO recipe);
         bool InsertRecipeeDeserialized(RecipeeDTO listOfRecipeeDeserialized);
-        RecipeDTO UpdateRecipe(int id, RecipeDTO recipe);
+        RecipeDTO? UpdateRecipe(int id, RecipeDTO recipe);
     }
 }

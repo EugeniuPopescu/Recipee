@@ -6,6 +6,6 @@ namespace Recipee.Interfaces.Services
     public interface IJsonService
     {
         bool DownloadJson(List<RecipeDTO> listRecipee);
-        RecipeeDTO GetListOfRecipeeDeserialized();
+        RecipeeDTO? GetListOfRecipeeDeserialized();
     }
 }

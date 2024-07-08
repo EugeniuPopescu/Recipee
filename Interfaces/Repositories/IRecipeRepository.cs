@@ -8,10 +8,10 @@ namespace Recipee.Interfaces.Repositories
     {
         bool DeleteRecipe(int id);
         List<RecipeShort> GetAllRecipee();
-        List<RecipeDTO> GetRecipeeToSerialize();
-        RecipeDTO GetRecipeId(int id);
+        List<RecipeDTO>? GetRecipeeToSerialize();
+        RecipeDTO? GetRecipeId(int id);
         bool InsertRecipe(RecipeDTO recipe, List<IngredientDTO> ingredients);
         bool InsertRecipee(RecipeDTO recipeDTO);
-        RecipeDTO UpdateRecipe(int id, RecipeDTO recipe, List<IngredientDTO> ingredients);
+        RecipeDTO? UpdateRecipe(int id, RecipeDTO recipe, List<IngredientDTO>? ingredients);
     }
 }
